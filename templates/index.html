@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Keuangan{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard Keuangan</h2>
+
+<!-- Ringkasan -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h6><i class="bi bi-arrow-down-circle"></i> Total Pemasukan</h6>
+                <h3>Rp {{ "{:,.0f}".format(total_masuk).replace(",", ".") }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-body">
+                <h6><i class="bi bi-arrow-up-circle"></i> Total Pengeluaran</h6>
+                <h3>Rp {{ "{:,.0f}".format(total_keluar).replace(",", ".") }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h6><i class="bi bi-wallet2"></i> Saldo Akhir</h6>
+                <h3>Rp {{ "{:,.0f}".format(saldo).replace(",", ".") }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabel Transaksi -->
+<div class="card shadow">
+    <div class="card-header bg-dark text-white">
+        <i class="bi bi-list-ul"></i> Daftar Transaksi
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Keterangan</th>
+                        <th>Kategori</th>
+                        <th>Jenis</th>
+                        <th class="text-end">Jumlah (Rp)</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if transaksi %}
+                        {% for t in transaksi %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ t.tanggal.strftime('%d-%m-%Y') }}</td>
+                            <td>{{ t.keterangan }}</td>
+                            <td><span class="badge bg-secondary">{{ t.kategori }}</span></td>
+                            <td>
+                                {% if t.jenis == 'masuk' %}
+                                    <span class="badge bg-success">Masuk</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Keluar</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end 
+                                {% if t.jenis == 'masuk' %}text-success{% else %}text-danger{% endif %}">
+                                {{ "{:,.0f}".format(t.jumlah).replace(",", ".") }}
+                            </td>
+                            <td class="text-center">
+                                <a href="/edit/{{ t.id }}" class="btn btn-sm btn-warning">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="/hapus/{{ t.id }}" 
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Yakin ingin menghapus transaksi ini?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1"></i><br>
+                                Belum ada transaksi. Klik <b>Tambah Transaksi</b> untuk memulai.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
